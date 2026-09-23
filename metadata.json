@@ -1,0 +1,6 @@
+{
+  "name": "EduGraphix Lab",
+  "description": "Complete Digital Solutions for Schools - Transform your institution into a smarter digital ecosystem.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

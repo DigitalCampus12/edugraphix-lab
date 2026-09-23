@@ -1,0 +1,192 @@
+{
+  "entities": {
+    "Lead": {
+      "title": "Lead",
+      "description": "Represents a potential client (school/institution) enquiry.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Contact person name" },
+        "institutionName": { "type": "string", "description": "School or institution name" },
+        "phone": { "type": "string", "description": "Contact phone number" },
+        "email": { "type": "string", "format": "email", "description": "Contact email address" },
+        "city": { "type": "string", "description": "City of the institution" },
+        "websiteURL": { "type": "string", "description": "Current school website URL" },
+        "studentRange": { "type": "string", "description": "Number of students (e.g., 0-500, 500-1000)" },
+        "servicesInterested": { "type": "array", "items": { "type": "string" }, "description": "List of services the lead is interested in" },
+        "source": { "type": "string", "description": "Lead source (e.g., Website Audit, Contact Form)" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" },
+        "status": { "type": "string", "enum": ["new", "contacted", "interested", "proposal_sent", "converted", "not_interested"], "description": "Current lead status" },
+        "notes": { "type": "string", "description": "Internal admin notes" }
+      },
+      "required": ["name", "institutionName", "phone", "email", "city", "source", "createdAt", "status"]
+    },
+    "DigitalAudit": {
+      "title": "Digital Audit",
+      "description": "Results of a school's digital readiness self-assessment.",
+      "type": "object",
+      "properties": {
+        "leadId": { "type": "string", "description": "Reference to the associated lead" },
+        "institutionName": { "type": "string", "description": "School name" },
+        "answers": { "type": "object", "description": "Map of question IDs to scores" },
+        "totalScore": { "type": "number", "description": "Calculated audit score (0-100)" },
+        "resultCategory": { "type": "string", "description": "Category based on score" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Audit completion timestamp" }
+      },
+      "required": ["leadId", "institutionName", "answers", "totalScore", "resultCategory", "createdAt"]
+    },
+    "ContactMessage": {
+      "title": "Contact Message",
+      "description": "General enquiry message from the contact form.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "institution": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string" },
+        "message": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["new", "read", "archived"] }
+      },
+      "required": ["name", "institution", "email", "phone", "message", "createdAt", "status"]
+    },
+    "Service": {
+      "title": "Service",
+      "description": "Service offering details.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "category": { "type": "string", "enum": ["CREATE", "BUILD", "AUTOMATE", "GROW"] },
+        "description": { "type": "string" },
+        "icon": { "type": "string", "description": "Lucide icon name" },
+        "active": { "type": "boolean" },
+        "displayOrder": { "type": "number" }
+      },
+      "required": ["title", "category", "description", "icon", "active", "displayOrder"]
+    },
+    "PortfolioItem": {
+      "title": "Portfolio Item",
+      "description": "Showcase of past work.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "clientName": { "type": "string" },
+        "category": { "type": "string" },
+        "description": { "type": "string" },
+        "challenge": { "type": "string" },
+        "solution": { "type": "string" },
+        "images": { "type": "array", "items": { "type": "string" } },
+        "servicesProvided": { "type": "array", "items": { "type": "string" } },
+        "published": { "type": "boolean" }
+      },
+      "required": ["title", "clientName", "category", "description", "published"]
+    },
+    "Insight": {
+      "title": "Insight",
+      "description": "Data-based research insight or statistic.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "dataSource": { "type": "string" },
+        "year": { "type": "string" },
+        "chartType": { "type": "string", "enum": ["bar", "donut", "line"] },
+        "chartData": { "type": "array", "items": { "type": "object" } },
+        "disclaimer": { "type": "string" },
+        "published": { "type": "boolean" }
+      },
+      "required": ["title", "description", "dataSource", "year", "chartType", "chartData", "published"]
+    },
+    "Founder": {
+      "title": "Founder",
+      "description": "EduGraphix Lab Co-Founder profile.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "designation": { "type": "string" },
+        "bio": { "type": "string" },
+        "expertise": { "type": "array", "items": { "type": "string" } },
+        "photoUrl": { "type": "string" },
+        "storagePath": { "type": "string" },
+        "linkedin": { "type": "string" },
+        "email": { "type": "string" },
+        "displayOrder": { "type": "number" },
+        "published": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "designation", "bio", "expertise", "displayOrder", "published"]
+    },
+    "CompanyPhoto": {
+      "title": "Company Photo",
+      "description": "EduGraphix Lab team, office, or project photograph.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string", "enum": ["Office", "Team", "Projects", "Events", "Workspace", "Other"] },
+        "photoUrl": { "type": "string" },
+        "storagePath": { "type": "string" },
+        "displayOrder": { "type": "number" },
+        "published": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "category", "photoUrl", "displayOrder", "published"]
+    },
+    "CompanyContact": {
+      "title": "Company Contact",
+      "description": "Centralized company contact information.",
+      "type": "object",
+      "properties": {
+        "companyName": { "type": "string" },
+        "tagline": { "type": "string" },
+        "phone1": { "type": "string" },
+        "phone2": { "type": "string" },
+        "email": { "type": "string" },
+        "location": { "type": "string" },
+        "whatsapp": { "type": "string" },
+        "websiteUrl": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["companyName", "tagline", "phone1", "email", "location", "whatsapp"]
+    }
+  },
+  "firestore": {
+    "/leads/{leadId}": {
+      "schema": "Lead",
+      "description": "Collection of business leads."
+    },
+    "/digitalAudits/{auditId}": {
+      "schema": "DigitalAudit",
+      "description": "Collection of digital readiness audits."
+    },
+    "/contactMessages/{messageId}": {
+      "schema": "ContactMessage",
+      "description": "Collection of contact form submissions."
+    },
+    "/services/{serviceId}": {
+      "schema": "Service",
+      "description": "Collection of services offered."
+    },
+    "/portfolio/{itemId}": {
+      "schema": "PortfolioItem",
+      "description": "Collection of portfolio projects."
+    },
+    "/insights/{insightId}": {
+      "schema": "Insight",
+      "description": "Collection of data insights and statistics."
+    },
+    "/founders/{founderId}": {
+      "schema": "Founder",
+      "description": "Collection of co-founder profiles."
+    },
+    "/companyPhotos/{photoId}": {
+      "schema": "CompanyPhoto",
+      "description": "Collection of company atmosphere photos."
+    },
+    "/companyProfile/contact": {
+      "schema": "CompanyContact",
+      "description": "Single document for company contact info."
+    }
+  }
+}

@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #1a2b4b; /* Navy Blue from Logo */
+  --color-secondary: #84cc16; /* Lime Green from Logo */
+  --color-accent: #a3e635; /* Light Green from Logo */
+  --color-bg-light: #F8FAFC;
+  --color-charcoal: #1e293b;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-jakarta: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-white text-charcoal antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-primary font-bold tracking-tight;
+  }
+}
+
+@layer components {
+  .premium-card {
+    @apply bg-white rounded-2xl shadow-sm border border-slate-100 p-6 transition-all duration-300 hover:shadow-md;
+  }
+  .btn-primary {
+    @apply bg-primary text-white px-8 py-3 rounded-full font-semibold transition-all hover:bg-secondary hover:scale-105 active:scale-95 flex items-center justify-center gap-2;
+  }
+  .btn-outline {
+    @apply border-2 border-primary text-primary px-8 py-3 rounded-full font-semibold transition-all hover:bg-primary hover:text-white hover:scale-105 active:scale-95 flex items-center justify-center gap-2;
+  }
+}

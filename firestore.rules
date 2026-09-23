@@ -1,0 +1,127 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEmailVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.email == "digitalcampus11@gmail.com"
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- Entity Validations ---
+
+    function isValidLead(data) {
+      return data.keys().hasAll(['name', 'institutionName', 'phone', 'email', 'city', 'source', 'createdAt', 'status']) &&
+             data.keys().size() <= 12 &&
+             data.name is string && data.name.size() <= 100 &&
+             data.institutionName is string && data.institutionName.size() <= 200 &&
+             data.phone is string && data.phone.size() <= 20 &&
+             data.email is string && data.email.size() <= 100 &&
+             data.city is string && data.city.size() <= 100 &&
+             data.source is string &&
+             data.createdAt == request.time &&
+             data.status in ['new', 'contacted', 'interested', 'proposal_sent', 'converted', 'not_interested'];
+    }
+
+    function isValidAudit(data) {
+      return data.keys().hasAll(['leadId', 'institutionName', 'answers', 'totalScore', 'resultCategory', 'createdAt']) &&
+             data.leadId is string &&
+             data.institutionName is string &&
+             data.answers is map &&
+             data.totalScore is number &&
+             data.resultCategory is string &&
+             data.createdAt == request.time;
+    }
+
+    function isValidMessage(data) {
+      return data.keys().hasAll(['name', 'institution', 'email', 'phone', 'message', 'createdAt', 'status']) &&
+             data.name is string &&
+             data.institution is string &&
+             data.email is string &&
+             data.phone is string &&
+             data.message is string &&
+             data.createdAt == request.time &&
+             data.status in ['new', 'read', 'archived'];
+    }
+
+    // --- Collections ---
+
+    match /leads/{leadId} {
+      allow create: if isValidLead(incoming()) && incoming().status == 'new';
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /digitalAudits/{auditId} {
+      allow create: if isValidAudit(incoming());
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /contactMessages/{messageId} {
+      allow create: if isValidMessage(incoming()) && incoming().status == 'new';
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /services/{serviceId} {
+      allow read: if incoming() == null || existing().active == true || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /portfolio/{itemId} {
+      allow read: if incoming() == null || existing().published == true || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /insights/{insightId} {
+      allow read: if incoming() == null || existing().published == true || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if false; // Only manageable via Firebase Console or special script
+    }
+
+    // --- Company Profile Collections ---
+
+    match /founders/{founderId} {
+      allow read: if true; // Allow list/get for everyone, client filters published status or we add a query check
+      allow write: if isAdmin();
+    }
+
+    match /companyPhotos/{photoId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /companyProfile/contact {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}
